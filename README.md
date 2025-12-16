@@ -9,21 +9,12 @@ A modular, multi-tier Discord bot with a fully functional web dashboard.
     *   Node.js 20+ (if running locally without Docker).
 
 2.  **Configuration**:
-    *   Create a `.env` file in the root directory (copy `.env.example` if it exists, or use the template below).
-
-    ```env
-    # Database
-    DATABASE_URL="postgres://user:password@localhost:5432/botify"
-
-    # Discord Bot
-    DISCORD_TOKEN="your_discord_bot_token"
-    DISCORD_CLIENT_ID="your_discord_client_id"
-
-    # Dashboard
-    NEXTAUTH_SECRET="super_secret_string"
-    NEXTAUTH_URL="http://localhost:3000"
-    DISCORD_CLIENT_SECRET="your_discord_client_secret"
-    ```
+    *   Copy `.env.example` to `.env`:
+        ```bash
+        cp .env.example .env
+        ```
+    *   Open `.env` and fill in your values (Discord Token, Client ID, etc.).
+    *   **Note**: The `.env` file is git-ignored to keep your secrets safe. Never commit it to GitHub.
 
 3.  **Run with Docker**:
     ```bash
