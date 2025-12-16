@@ -2,6 +2,30 @@
 
 A modular, multi-tier Discord bot with a fully functional web dashboard.
 
+## 🚀 Quick Setup (Recommended)
+
+**For first-time setup, use the automatic setup script:**
+
+**Windows (PowerShell):**
+```powershell
+.\setup.ps1
+```
+
+**Linux/Mac (Bash):**
+```bash
+chmod +x setup.sh
+./setup.sh
+```
+
+The setup script will:
+- Install all dependencies
+- Create and configure your `.env` file with test credentials
+- Generate Prisma client
+- Guide you through database setup
+- Get you ready to run `npm start`
+
+---
+
 ## Prerequisites
 
 Before you start, make sure you have the following installed:
