@@ -1,0 +1,179 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Guild {
+  id             String         @id
+  prefix         String         @default("/")
+  language       String         @default("en")
+  premiumExpiry  DateTime?
+  createdAt      DateTime       @default(now())
+  
+  members        Member[]
+  modules        ModuleToggle[]
+  tickets        Ticket[]
+  reactionRoles  ReactionRole[]
+  customCommands CustomCommand[]
+  auditLogs      AuditLog[]
+  shopItems      ShopItem[]
+  giveaways      Giveaway[]
+  permissions    GuildPermission[]
+  playlists      Playlist[]
+  reminders      Reminder[]
+}
+
+model User {
+  id        String   @id
+  tag       String?
+  avatar    String?
+  locale    String   @default("en")
+  vip       Boolean  @default(false)
+  createdAt DateTime @default(now())
+  
+  members   Member[]
+  tickets   Ticket[]
+  audits    AuditLog[]
+  reminders Reminder[]
+}
+
+model Member {
+  userId     String
+  guildId    String
+  xp         Int     @default(0)
+  level      Int     @default(0)
+  coins      Int     @default(0)
+  birthday   DateTime?
+  banned     Boolean @default(false)
+  mutedUntil DateTime?
+  
+  user       User    @relation(fields: [userId], references: [id])
+  guild      Guild   @relation(fields: [guildId], references: [id])
+
+  @@id([userId, guildId])
+}
+
+model GuildPermission {
+  userId  String
+  guildId String
+  tier    Int    // 0: Member, 1: Mod, 2: Admin, 3: Owner
+  
+  guild   Guild  @relation(fields: [guildId], references: [id])
+
+  @@id([userId, guildId])
+}
+
+model ModuleToggle {
+  id      Int     @id @default(autoincrement())
+  guildId String
+  module  String  // "moderation", "music", "leveling", etc.
+  enabled Boolean @default(true)
+  config  Json?   // Store module-specific settings (e.g., leveling curve, log channels)
+  
+  guild   Guild   @relation(fields: [guildId], references: [id])
+  
+  @@unique([guildId, module])
+}
+
+model Ticket {
+  id        Int      @id @default(autoincrement())
+  guildId   String
+  channelId String
+  userId    String
+  status    String   @default("open") // open, closed
+  reason    String?
+  createdAt DateTime @default(now())
+  closedBy  String?
+  
+  guild     Guild    @relation(fields: [guildId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model ReactionRole {
+  id        Int    @id @default(autoincrement())
+  guildId   String
+  messageId String
+  emoji     String
+  roleId    String
+  type      String @default("normal") // normal, verify, unique
+  
+  guild     Guild  @relation(fields: [guildId], references: [id])
+}
+
+model CustomCommand {
+  id           Int     @id @default(autoincrement())
+  guildId      String
+  name         String
+  response     String
+  embed        Json?
+  requiredRole String?
+  cooldown     Int     @default(0)
+  
+  guild        Guild   @relation(fields: [guildId], references: [id])
+  
+  @@unique([guildId, name])
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  guildId   String
+  userId    String
+  action    String   // MEMBER_KICK, CHANNEL_CREATE, etc.
+  target    String?
+  reason    String?
+  timestamp DateTime @default(now())
+  
+  guild     Guild    @relation(fields: [guildId], references: [id])
+  actor     User     @relation(fields: [userId], references: [id])
+}
+
+model ShopItem {
+  id         Int     @id @default(autoincrement())
+  guildId    String
+  name       String
+  price      Int
+  roleReward String?
+  xpReward   Int?
+  stock      Int     @default(-1) // -1 for infinite
+  
+  guild      Guild   @relation(fields: [guildId], references: [id])
+}
+
+model Giveaway {
+  id        Int      @id @default(autoincrement())
+  guildId   String
+  messageId String   @unique
+  channelId String
+  prize     String
+  winners   Int
+  endsAt    DateTime
+  ended     Boolean  @default(false)
+  entrants  String[] // Array of user IDs
+  
+  guild     Guild    @relation(fields: [guildId], references: [id])
+}
+
+model Playlist {
+  id      Int      @id @default(autoincrement())
+  guildId String
+  name    String
+  tracks  Json     // Array of track objects
+  
+  guild   Guild    @relation(fields: [guildId], references: [id])
+}
+
+model Reminder {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  guildId   String?
+  content   String
+  triggerAt DateTime
+  dispatched Boolean @default(false)
+  
+  user      User     @relation(fields: [userId], references: [id])
+  guild     Guild?   @relation(fields: [guildId], references: [id])
+}
