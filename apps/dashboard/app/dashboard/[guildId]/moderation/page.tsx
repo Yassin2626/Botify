@@ -12,7 +12,7 @@ interface ModerationPageProps {
 
 export default function ModerationPage({ params }: ModerationPageProps) {
     const { guildId } = params;
-    const { isConnected, execute Command, lastUpdate } = useSocket(guildId);
+    const { isConnected, executeCommand, lastUpdate } = useSocket(guildId);
 
     const [userId, setUserId] = useState('');
     const [reason, setReason] = useState('');
