@@ -10,13 +10,20 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "bot": "npm run dev --workspace=botify-bot",
+    "dashboard": "npm run dev --workspace=botify-dashboard",
+    "db:generate": "npm run db:generate --workspace=@botify/database",
+    "db:push": "npm run db:push --workspace=@botify/database",
+    "db:studio": "npm run db:studio --workspace=@botify/database",
+    "start": "concurrently \"npm run bot\" \"npm run dashboard\" --names \"BOT,DASH\" --prefix-colors \"blue,magenta\""
   },
   "devDependencies": {
     "turbo": "latest",
     "prettier": "latest",
     "typescript": "^5.3.3",
-    "@types/node": "^20.10.4"
+    "@types/node": "^20.10.4",
+    "concurrently": "^8.2.2"
   },
   "packageManager": "npm@10.2.4"
 }
