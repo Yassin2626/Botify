@@ -25,6 +25,7 @@ model Guild {
   permissions    GuildPermission[]
   playlists      Playlist[]
   reminders      Reminder[]
+  settings       BotSettings?
 }
 
 model SystemConfig {
@@ -181,4 +182,51 @@ model Reminder {
   
   user      User     @relation(fields: [userId], references: [id])
   guild     Guild?   @relation(fields: [guildId], references: [id])
+}
+
+// ============================================
+// ENTERPRISE FEATURES
+// ============================================
+
+model AuditLog {
+  id          Int      @id @default(autoincrement())
+  guildId     String
+  userId      String
+  action      String
+  target      String?
+  details     String
+  source      String
+  createdAt   DateTime @default(now())
+  
+  guild       Guild    @relation(fields: [guildId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+  
+  @@index([guildId, createdAt])
+  @@index([userId])
+  @@index([action])
+}
+
+model GuildPermission {
+  id          Int      @id @default(autoincrement())
+  guildId     String
+  userId      String
+  tier        String
+  createdAt   DateTime @default(now())
+  
+  guild       Guild    @relation(fields: [guildId], references: [id])
+  
+  @@unique([guildId, userId])
+  @@index([tier])
+}
+
+model BotSettings {
+  id          Int      @id @default(autoincrement())
+  guildId     String   @unique
+  prefix      String   @default("/")
+  language    String   @default("en")
+  timezone    String   @default("UTC")
+  botToken    String?
+  updatedAt   DateTime @default(now())
+  
+  guild       Guild    @relation(fields: [guildId], references: [id])
 }
