@@ -77,7 +77,7 @@ model ModuleToggle {
   guildId String
   module  String  // "moderation", "music", "leveling", etc.
   enabled Boolean @default(true)
-  config  Json?   // Store module-specific settings (e.g., leveling curve, log channels)
+  config  String?   // Store module-specific settings (e.g., leveling curve, log channels) as JSON string
   
   guild   Guild   @relation(fields: [guildId], references: [id])
   
@@ -114,7 +114,7 @@ model CustomCommand {
   guildId      String
   name         String
   response     String
-  embed        Json?
+  embed        String?  // Stored as JSON string
   requiredRole String?
   cooldown     Int     @default(0)
   
@@ -157,7 +157,7 @@ model Giveaway {
   winners   Int
   endsAt    DateTime
   ended     Boolean  @default(false)
-  entrants  String[] // Array of user IDs
+  entrants  String   @default("") // Comma-separated user IDs
   
   guild     Guild    @relation(fields: [guildId], references: [id])
 }
@@ -166,7 +166,7 @@ model Playlist {
   id      Int      @id @default(autoincrement())
   guildId String
   name    String
-  tracks  Json     // Array of track objects
+  tracks  String   // Array of track objects as JSON string
   
   guild   Guild    @relation(fields: [guildId], references: [id])
 }
